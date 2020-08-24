@@ -1,0 +1,356 @@
+ENTITE PROMO
+
+
+ * "post_apprenant"={
+ * "methods"="POST",
+ * "path"="/admin/promo",
+ * "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM'))",
+ * "access_control_message"="Vous n'avez pas access à cette Ressource",
+ * "route_name"="ajouter_apprenant",
+ *  }  
+ * },
+ *       itemOperations={
+ *     "put","delete","patch","get",
+ *    "get_promo_by_id"={
+ *    "method"="GET",
+ *    "path"="api/admin/promo/{id}",
+ *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *    "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *    "route_name"="show_promo_by_id",
+ *          },
+ *     "getPromoPrincipalById"={
+ *    "method"="GET",
+ *    "path"="api/admin/promo/{id}/principal",
+ *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *    "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *    "route_name"="showPromoPrincipalById",
+ *          },
+ *  "getPromoRefentielById"={
+ *    "method"="GET",
+ *    "path"="api/admin/promo/{id}/referentiels",
+ *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *    "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *    "route_name"="showPromoRefentielById",
+ *          },
+ *   "getApprenantAttenteById"={
+ *    "method"="GET",
+ *    "path"="api/admin/promo/{id}/apprenants/attentes",
+ *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *    "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *    "route_name"="showApprenantAttenteById",
+ *          },
+ * "getGroupeApprenantById"={
+ *    "method"="GET",
+ *    "path"="api/admin/promo/{id1}/groupes/{id2}/apprenants",
+ *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *    "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *    "route_name"="showGroupeApprenantById",
+ *          },
+ * "getFormateurById"={
+ *    "method"="GET",
+ *    "path"="api/admin/promo/{id}/formateurs",
+ *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *    "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *    "route_name"="showFormateurById",
+ *          },
+ * "ReferencePromoById"={
+ *    "method"="PUT",
+ *    "path"="api/admin/promo/{id}/referentiels",
+ *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *    "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *    "route_name"="editReferencePromoById"
+ *          },
+ * "add_delete_Apprenant"={
+ *    "method"="PUT",
+ *    "path"="api/admin/promo/{id}/apprenants",
+ *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *    "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *    "route_name"="AddDeleteAppreant",
+ *          },
+ * "add_delete_Formateur"={
+ *    "method"="PUT",
+ *    "path"="api/admin/promo/{id}/formateurs",
+ *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *    "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *    "route_name"="AddDeleteFormateur",
+ *          },
+ * "Edit_statut"={
+ *    "method"="PUT",
+ *    "path"="api/admin/promo/{id_1}/groupes/{id_2}",
+ *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *    "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *    "route_name"="Edit_statut_groupe",
+ *          }              
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+                PROMOCONTROLLER
+//<------------------------------------------------------------------------------------->
+                    //Liste promo: Liste apprenant en attente
+    /**
+     * @Route(
+     * name="listes_attentes",
+     * path="api/admin/promo/apprenants/attentes",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::getListeAttentes",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="get_Liste_attentes"
+     * }
+     * )
+     */
+    
+ /*   Public function getListeAttentes(SerializerInterface $serializer,PromoRepository $repo)
+    {
+        $promo= $repo->findByPromotion();
+        $Promot =$serializer->serialize($promo,"json",
+        [
+            "groups"=>["promo:read_All"]
+        ]
+    );
+        return new JsonResponse($Promot,Response::HTTP_OK,[],true);
+    }
+*/
+
+//<------------------------------------------------------------------------------------->
+                            //Ajouter promo  
+    /**
+     * @Route(
+     * name="ajouter_apprenant",
+     * path="api/admin/promo",
+     * methods={"POST"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::PostAprenant",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="post_apprenant"
+     * }
+     * )
+     */
+    
+/*    public function PostAprenant(SerializerInterface $serializer,Request $request,ValidatorInterface $validator)
+    {
+        $competence = $request->getContent();
+        //$niveau= new Niveau();
+        $compt = $serializer->deserialize($competence , Promo::class, 'json');
+        //$niv=$serializer->deserialize($niveau , Niveau::class, 'json');
+
+        $errors = $validator->validate($compt);
+        if (count($errors) > 0) {
+            $errorsString =$serializer->serialize($errors,"json");
+            return new JsonResponse( $errorsString ,Response::HTTP_BAD_REQUEST,[],true);
+        }
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($compt);
+        //$entityManager->persist($niv);
+        $entityManager->flush();
+        return new JsonResponse("Promo ajouter avec succes", 200);
+    }
+*/
+//<------------------------------------------------------------------------------------->
+                   //Afficher Referentiel , Formateurs et les groupes
+/**
+     * @Route(
+     * name="show_promo_by_id",
+     * path="api/admin/promo/{id}",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::getPromoById",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="get_promo_by_id"
+     * }
+     * )
+     */
+    
+   /* Public function getPromoById(PromoRepository $repo)
+   {
+        $promo= $repo->findByPromo();
+        return $this->json($promo,Response::HTTP_OK);
+    }*/
+//<------------------------------------------------------------------------------------->
+                  //Afficher Referentiel , Formateurs et les apprenants
+
+ /**
+     * @Route(
+     * name="showPromoPrincipalById",
+     * path="api/admin/promo/{id}/principal",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::getPromoPrincipalById",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="getPromoPrincipalById"
+     * }
+     * )
+     */
+    
+  /*  Public function getPromoPrincipalById(PromoRepository $repo)
+    {
+        $promo= $repo->findByPromo();
+        return $this->json($promo,Response::HTTP_OK);
+    }  */                        
+//<------------------------------------------------------------------------------------->
+          //Afficher Referentiel , Promo,Groupe de compétences et les competences  
+/**
+     * @Route(
+     * name="showPromoRefentielById",
+     * path="api/admin/promo/{id}/referentiels",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::showPromoRefentielById",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="getPromoRefentielById"
+     * }
+     * )
+     */
+    
+  /*  Public function showPromoRefentielById(PromoRepository $repo)
+    {
+        $promo= $repo->findByPromo();
+        return $this->json($promo,Response::HTTP_OK);
+    }*/
+//<------------------------------------------------------------------------------------->
+                            //Afficher Referentiel ,Apprenants Attentes  
+     /**
+     * @Route(
+     * name="showApprenantAttenteById",
+     * path="api/admin/promo/{id}/apprenants/attente",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::getApprenantAttenteById",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="getApprenantAttenteById"
+     * }
+     * )
+     */
+    
+/*    Public function getApprenantAttenteById(PromoRepository $repo)
+    {
+        $promo= $repo->findByPromo();
+        return $this->json($promo,Response::HTTP_OK);
+    }*/
+//<------------------------------------------------------------------------------------->
+                            //Affcher Promo,Groupe,Apprents,Referentiel et Apprenants 
+    /**
+     * @Route(
+     * name="showGroupeApprenantById",
+     * path="api/admin/promo/{id1}/groupes/{id2}/apprenants",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::getGroupeApprenantById",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="getGroupeApprenantById"
+     * }
+     * )
+     */
+    
+ /*   Public function getGroupeApprenantById(PromoRepository $repo)
+    {
+        $promo= $repo->findByPromo();
+        return $this->json($promo,Response::HTTP_OK);
+    }*/
+//<------------------------------------------------------------------------------------->
+                            //Liste formateurs, referentiels et groupe 
+     /**
+     * @Route(
+     * name="showFormateurById",
+     * path="api/admin/promo/{id}/formateurs",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::getFormateur",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="getFormateurById"
+     * }
+     * )
+     */
+    
+ /*   Public function getFormateur(PromoRepository $repo)
+    {
+        $promo= $repo->findByPromo();
+        return $this->json($promo,Response::HTTP_OK);
+    }  */
+//<------------------------------------------------------------------------------------->
+                            //Modifier la promo et le referentiel 
+    /**
+     * @Route(
+     * name="editReferencePromoById",
+     * path="api/admin/promo/{id}",
+     * methods={"PUT"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::ReferencePromoById",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="ReferencePromoById"
+     * }
+     * )
+     */
+    
+   /* Public function ReferencePromoById(PromoRepository $repo)
+    {
+        $promo= $repo->findByPromo();
+        return $this->json($promo,Response::HTTP_OK);
+    }*/
+//<------------------------------------------------------------------------------------->
+                            //Ajouter/Supprimer apprenant  
+    /**
+     * @Route(
+     * name="AddDeleteAppreant",
+     * path="api/admin/promo/{id}/apprenants",
+     * methods={"PUT"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::DeleteApprenant",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="add_delete_Apprenant"
+     * }
+     * )
+     */
+    
+    // Public function DeleteApprenant(PromoRepository $repo)
+    // {
+    //     $promo= $repo->findByPromo();
+    //     return $this->json($promo,Response::HTTP_OK);
+    // }
+//<------------------------------------------------------------------------------------->
+                            //Ajouter/Supprimer formateur  
+    /**
+     * @Route(
+     * name="AddDeleteFormateur",
+     * path="api/admin/promo/{id}",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::DeleteFormateur",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="add_delete_Formateur"
+     * }
+     * )
+     */
+    
+    // Public function DeleteFormateur(PromoRepository $repo)
+    // {
+    //     $promo= $repo->findByPromo();
+    //     return $this->json($promo,Response::HTTP_OK);
+    // }
+//<------------------------------------------------------------------------------------->
+                            //Modifier statut d'un groupe
+    /**
+     * @Route(
+     * name="Edit_statut_groupe",
+     * path="api/admin/promo/{id1}/groupes/{id2}",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\PromoController::Edit_statut",
+     * "_api_resource_class"=Promo::class,
+     * "_api_collection_operation_name"="Edit_statut"
+     * }
+     * )
+     */
+    
+    // Public function Edit_statut(PromoRepository $repo)
+    // {
+    //     $promo= $repo->findByPromo();
+    //     return $this->json($promo,Response::HTTP_OK);
+    // }                                           

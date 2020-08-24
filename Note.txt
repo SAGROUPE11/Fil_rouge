@@ -1,0 +1,21 @@
+PhpSpreadsheetBundle
+https://phpspreadsheet.readthedocs.io/en/latest/topics/reading-and-writing-to-file/
+
+public function excelInArray($doc)
+    {
+        $tabEmail = [];
+        $file = IOFactory::identify($doc);
+
+        $reader = IOFactory::createReader($file);
+        $spreadsheet = $reader->load($doc);
+
+        $array_content_file = $spreadsheet->getActivesheet()->toArray();
+        foreach ($array_content_file as $value) {
+            foreach ($value as $email) {
+                if ($email != null)
+                    $tabEmail [] = $email;
+            }
+        }
+        return $tabEmail;
+
+composer require symfonycasts/reset-password-bundle
