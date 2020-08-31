@@ -7,7 +7,7 @@ use App\Entity\Promo;
 use App\Entity\Groupe;
 use App\Entity\Apprenant;
 use App\Repository\ProfilRepository;
-use App\Controller\PromotionController;
+
 use App\Repository\ApprenantRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Doctrine\ORM\EntityManagerInterface;

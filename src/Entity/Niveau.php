@@ -60,39 +60,48 @@ class Niveau
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"competence:read", "groupecompetence:read_All"})
+     * @Groups({"competence:read","brief_Groupe:read", "groupecompetence:read_All","formateur_competence:read","apprenant_competence:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le libelle est obligatoire")
-     * @Groups({"competence:read", "groupecompetence:read_All"})
+     * @Groups({"competence:read","brief_Groupe:read", "groupecompetence:read_All","formateur_competence:read","apprenant_competence:read"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Les critetres d'evaluation est obligatoire")
-     * @Groups({"competence:read", "groupecompetence:read_All"})
+     * @Groups({"competence:read","brief_Groupe:read", "groupecompetence:read_All","formateur_competence:read", "apprenant_competence:read"})
      */
     private $critereEvaluation;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le groupe d'action est obligatoire")
-     * @Groups({"competence:read", "groupecompetence:read_All"})
+     * @Groups({"competence:read","brief_Groupe:read", "groupecompetence:read_All","formateur_competence:read"})
      */
     private $groupeAction;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Competences::class, inversedBy="niveaux")
+     * @ORM\ManyToOne(targetEntity=Competences::class, inversedBy="niveaux" ,cascade={"persist"})
+     * @Groups({"brief:read","brief_Groupe:read"})
      */
     private $competence;
+
+    /**
+     * @ORM\OneToMany(targetEntity=NiveauLivrablePartielle::class, mappedBy="niveau", cascade={"persist"})
+     */
+    private $niveauLivrablePartielle;
+
 
     public function __construct()
     {
         $this->competences = new ArrayCollection();
+        $this->livrablePartiels = new ArrayCollection();
+        $this->niveauLivrablePartielle = new ArrayCollection();
     }
 
 
@@ -146,6 +155,37 @@ class Niveau
     public function setCompetence(?Competences $competence): self
     {
         $this->competence = $competence;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|NiveauLivrablePartielle[]
+     */
+    public function getNiveauLivrablePartielle(): Collection
+    {
+        return $this->niveauLivrablePartielle;
+    }
+
+    public function addNiveauLivrablePartielle(NiveauLivrablePartielle $niveauLivrablePartielle): self
+    {
+        if (!$this->niveauLivrablePartielle->contains($niveauLivrablePartielle)) {
+            $this->niveauLivrablePartielle[] = $niveauLivrablePartielle;
+            $niveauLivrablePartielle->setNiveau($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNiveauLivrablePartielle(NiveauLivrablePartielle $niveauLivrablePartielle): self
+    {
+        if ($this->niveauLivrablePartielle->contains($niveauLivrablePartielle)) {
+            $this->niveauLivrablePartielle->removeElement($niveauLivrablePartielle);
+            // set the owning side to null (unless already changed)
+            if ($niveauLivrablePartielle->getNiveau() === $this) {
+                $niveauLivrablePartielle->setNiveau(null);
+            }
+        }
 
         return $this;
     }

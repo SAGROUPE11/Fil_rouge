@@ -3,6 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Competences;
+use App\Entity\CompetencesValides;
+use App\Entity\Referenciel;
+use App\Entity\Promo;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -57,5 +60,37 @@ class CompetenceRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
             ;
+    }
+
+    public function ShowCompetencesRefP($id_p,$id_r)
+    {
+        return $this->createQueryBuilder('c')
+            ->innerJoin('c.competencesValides','cv')
+            ->innerJoin('cv.referenciel','r')
+            ->innerJoin('r.promos','p')
+            ->andWhere('r.id = :val')
+            ->setParameter('val', $id_r)
+            ->andWhere('p.id = :va')
+            ->setParameter('va', $id_p)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function getCbyGbyRef($id1,$id2)
+    {
+        return $this->createQueryBuilder('c')
+            ->innerJoin('c.groupeCompetences', 'g')
+            ->innerJoin('g.referenciel', 'r')
+            ->andWhere('r.id= :va')
+            ->setParameter('va', $id1)
+            ->andWhere('g.id= :val')
+            ->setParameter('val', $id2)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+
     }
 }

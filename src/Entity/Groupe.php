@@ -27,7 +27,21 @@ use Symfony\Component\Validator\Constraints as Assert;
  * "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM'))",
  * "access_control_message"="Vous n'avez pas access à cette Ressource",
  * "route_name"="list_groupe"
- *              }
+ *              },
+ *   "get_groupes_apps"={
+ *  "normalization_context"={"groups":"apprenant:read"},
+ * "method"="GET",
+ * "path"="/admin/groupes/apprenants" ,
+ * "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
+ * "access_control_message"="Vous n'avez pas access à cette Ressource",
+ * },
+ *  "post_groupe"={
+ * "method"="POST",
+ * "path"="api/admin/groupes",
+ * "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
+ * "access_control_message"="Vous n'avez pas access à cette Ressource",
+ * "route_name"="groupe_write",
+ * },
  * },
  *     itemOperations={
  *     "put","delete","patch","get",
@@ -37,8 +51,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
  *    "access_control_message"="Vous n'avez pas access à cette Ressource",
  *    "route_name"="show_groupes_by_id",
- *          }
- *      }
+ *          },
+ *  "post_app_gr"={
+ * "method"="PUT",
+ * "path"="/admin/groupes/{id}",
+ * "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
+ * "access_control_message"="Vous n'avez pas access à cette Ressource",
+ * "route_name"="app_gr_write",
+ * },
+ *   "delete_apprenant"={
+ *         "method"="DELETE",
+ *         "path"="/groupes/{id_groupe}/apprenants/{id_apprenant}",
+ *         "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
+ *         "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *         "route_name"="delete_apprenant_groupe",
+ *     }
+ *    }
  * )
  */
 class Groupe
@@ -47,57 +75,57 @@ class Groupe
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"promo:read_All","promo:principal_read","promo_groupe_apprenant:read","promo_formateur:read"})
+     * @Groups({"promo:read_All","promo:principal_read","promo_groupe_apprenant:read","promo_formateur:read","brief_Groupe:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"promo:read_All","promo:principal_read","promo_groupe_apprenant:read","promo_formateur:read"})
+     * @Groups({"promo:read_All","promo:principal_read","promo_groupe_apprenant:read","promo_formateur:read","brief_Groupe:read"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"promo:read_All","promo:principal_read","promo_groupe_apprenant:read","promo_formateur:read"})
+     * @Groups({"promo:read_All","brief_Groupe:read","promo:principal_read","promo_groupe_apprenant:read","promo_formateur:read"})
      */
     private $dateCreation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"promo:read_All","promo:principal_read","promo_groupe_apprenant:read","promo_formateur:read"})
+     * @Groups({"promo:read_All","brief_Groupe:read","promo:principal_read","promo_groupe_apprenant:read","promo_formateur:read"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"promo:read_All","promo:principal_read","promo_groupe_apprenant:read","promo_formateur:read"})
+     * @Groups({"promo:read_All","brief_Groupe:read","promo:principal_read","promo_groupe_apprenant:read","promo_formateur:read"})
      */
     private $type;
 
     /**
      * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="groupe", cascade={"persist"})
-     * @Groups({"groupe:read_All"})
+     * @Groups({"groupe:read_All","groupe:read","brief_Groupe:read"})
      */
     private $promo;
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, mappedBy="groupe")
-     * @Groups({"groupe:read_All"})
+     * @Groups({"groupe:read_All","groupe:read","brief_Groupe:read"})
      */
     private $formateurs;
     
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, mappedBy="groupe", cascade={"persist"})
-     * @Groups({"groupe:read_All","promo:principal_read","promo:attente_read","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:principal_read","promo:attente_read","promo_groupe_apprenant:read"})
      */
     private $apprenants;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isDeleted;
+    private $isDeleted=true;
 
     /**
      * @ORM\OneToMany(targetEntity=BriefGroupe::class, mappedBy="groupe")

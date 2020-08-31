@@ -8,7 +8,7 @@ use App\Entity\Niveau;
 use App\Entity\Apprenant;
 use App\Entity\Formateur;
 use App\Entity\Referenciel;
-use App\Controller\PromoController;
+
 use App\Repository\PromoRepository;
 use App\Repository\GroupeRepository;
 use App\Repository\ProfilRepository;

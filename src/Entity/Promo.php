@@ -101,67 +101,67 @@ class Promo
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"groupe:read_All","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupe:read_All","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupe:read_All","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupe:read_All","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupe:read_All","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $lieu;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupe:read_All","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $reference;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"groupe:read_All","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $dateDebut;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"groupe:read_All","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $dateFinProvisoire;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupe:read_All","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $fabrique;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"groupe:read_All","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $dateFinReelle;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupe:read_All","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","brief_Groupe:read","promo:write","promo:read_CRGrp_C","promo_groupe_apprenant:read"})
      */
     private $etat;
 
@@ -172,7 +172,7 @@ class Promo
     private $groupe;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="promos")
+     * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="promos",cascade={"persist"})
      * @Groups({"promo:read_All","promo:principal_read","promo:read","promo_formateur:read"})
      */
     private $formateur;
@@ -184,20 +184,26 @@ class Promo
     private $referenciel;
 
     /**
-     * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="promo")
+     * @ORM\OneToMany(targetEntity=Apprenant::class, mappedBy="promo",cascade={"persist"})
      * @Groups({"groupe:read_All","promo:principal_read","promo:attente_read"})
      */
     private $apprenant;
 
     /**
-     * @ORM\OneToMany(targetEntity=BriefMaPromo::class, mappedBy="Promo")
+     * @ORM\OneToMany(targetEntity=BriefMaPromo::class, mappedBy="Promo",cascade={"persist"})
+     * @Groups({"brief_Groupe:read"})
      */
     private $briefMaPromos;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Briefs::class, mappedBy="promo")
+     * @ORM\ManyToMany(targetEntity=Briefs::class, mappedBy="promo",cascade={"persist"})
      */
     private $briefs;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CompetencesValides::class, mappedBy="promo",cascade={"persist"})
+     */
+    private $competencesValides;
 
 
 
@@ -209,6 +215,7 @@ class Promo
         $this->apprenant = new ArrayCollection();
         $this->briefMaPromos = new ArrayCollection();
         $this->briefs = new ArrayCollection();
+        $this->competencesValides = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -504,6 +511,37 @@ class Promo
         if ($this->briefs->contains($brief)) {
             $this->briefs->removeElement($brief);
             $brief->removePromo($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CompetencesValides[]
+     */
+    public function getCompetencesValides(): Collection
+    {
+        return $this->competencesValides;
+    }
+
+    public function addCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if (!$this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides[] = $competencesValide;
+            $competencesValide->setPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if ($this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides->removeElement($competencesValide);
+            // set the owning side to null (unless already changed)
+            if ($competencesValide->getPromo() === $this) {
+                $competencesValide->setPromo(null);
+            }
         }
 
         return $this;

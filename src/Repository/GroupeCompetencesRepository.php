@@ -66,4 +66,26 @@ class GroupeCompetencesRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+/*
+    public function ShowCompetencesRefP($id_p,$id_r)
+    {
+        return $this->createQueryBuilder('c')
+            ->innerJoin('cv.referenciel','r')
+            ->andWhere('r.id = :val')
+            ->setParameter('val', $id_r)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }*/
+
+    public function findGRCComp()
+    {
+        return $this->createQueryBuilder('g')
+            ->innerJoin('g.referenciel', 'c')
+            ->orderBy('g.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+    }
 }

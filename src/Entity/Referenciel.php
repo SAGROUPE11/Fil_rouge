@@ -11,9 +11,38 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
 /**
- * @ApiResource()
  * @ORM\Entity(repositoryClass=ReferencielRepository::class)
+ * @ApiResource(
+ *  normalizationContext={"groups"={"reference:read"}},
+ *  collectionOperations={
+ * "get_referentiels"={
+ * "method"="GET",
+ * "path"="/admin/referentiels" ,
+ * "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM'))",
+ * "access_control_message"="Vous n'avez pas access à cette Ressource",
+ * },
+ *  "post_referentiels"={
+ * "method"="POST",
+ * "path"="api/admin/referentiels",
+ * "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM'))",
+ * "access_control_message"="Vous n'avez pas access à cette Ressource",
+ * "route_name"="referentiels_write",
+ * },
+ *  },
+ *
+ *   itemOperations={
+ *  "put","delete","patch","get",
+ *   "get"={"path":"/admin/referentiels/{id}","normalization_context"={"groups":"refgrcomp:read"}},
+ *   "archivage_referentiel"={
+ *    "method"="PUT",
+ *    "path"="/admin/referentiels/{id}",
+ *    "requirements"={"id"="\d+"},
+ *   "controller"=App\Controller\ReferencielController::class
+ *  }
+ *  },
+ * )
  */
 class Referenciel
 {
@@ -61,7 +90,7 @@ class Referenciel
     private $criteresEvaluation;
 
     /**
-     * @ORM\ManyToMany(targetEntity=GroupeCompetences::class, mappedBy="referenciel")
+     * @ORM\ManyToMany(targetEntity=GroupeCompetences::class, mappedBy="referenciel",cascade={"persist"})
      *  @Groups({"promo:read_CRGrp_C"})
      */
     private $groupeCompetences;
@@ -71,11 +100,17 @@ class Referenciel
      */
     private $promos;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CompetencesValides::class, mappedBy="referenciel",cascade={"persist"})
+     */
+    private $competencesValides;
+
 
     public function __construct()
     {
         $this->groupeCompetences = new ArrayCollection();
         $this->promos = new ArrayCollection();
+        $this->competencesValides = new ArrayCollection();
     }
 
 
@@ -195,6 +230,37 @@ class Referenciel
         if ($this->promos->contains($promo)) {
             $this->promos->removeElement($promo);
             $promo->removeReferenciel($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CompetencesValides[]
+     */
+    public function getCompetencesValides(): Collection
+    {
+        return $this->competencesValides;
+    }
+
+    public function addCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if (!$this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides[] = $competencesValide;
+            $competencesValide->setReferenciel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if ($this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides->removeElement($competencesValide);
+            // set the owning side to null (unless already changed)
+            if ($competencesValide->getReferenciel() === $this) {
+                $competencesValide->setReferenciel(null);
+            }
         }
 
         return $this;

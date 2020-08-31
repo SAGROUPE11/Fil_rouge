@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Niveau;
 use App\Entity\Competences;
-use App\Controller\CompetenceController;
 use App\Repository\CompetenceRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,8 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CompetenceController extends AbstractController
 {
-//<------------------------------------------------------------------------------------->
-                    //La liste des competences
+
      /**
      * @Route(
      * name="list_competence",
@@ -120,14 +118,14 @@ class CompetenceController extends AbstractController
     public function EditCompetence(Request $request, SerializerInterface $serializer, Competences $niveau, ValidatorInterface $validator, EntityManagerInterface $entityManager)
     {
         $niveauUpdate = $entityManager->getRepository(Competences::class)->find($niveau->getId());
-        $data = json_decode($request->getContent());
-        foreach ($data as $key => $value){
-            if($key && !empty($value)) {
-                $name = ucfirst($key);
-                $setter = 'set'.$name;
-                $phoneUpdate->$setter($value);
-            }
-        }
+         $data = json_decode($request->getContent());
+         foreach ($data as $key => $value){
+             if($key && !empty($value)) {
+                 $name = ucfirst($key);
+                 $setter = 'set'.$name;
+                 $niveauUpdate->$setter($value);
+             }
+         }
        
         $errors = $validator->validate($niveauUpdate);
         if (count($errors) > 0) {
@@ -163,5 +161,24 @@ class CompetenceController extends AbstractController
         $entityManager->flush();
         
          return  $this->Json("Competence supprimer avec succés",200);
+    }
+
+    /**
+     * @Route(
+     * name="grpecompetence_by_id",
+     * path="/api/admin/referentiels/{id1}/grpecompetences/{id2}",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\CompetenceController::getCbyG",
+     * "_api_resource_class"=Competences::class,
+     * "_api_collection_operation_name"="get_grpecompetence_by_id"
+     * }
+     * )
+     */
+
+    public function getCbyG (CompetenceRepository $repo, int $id1, int $id2 )
+    {
+        $ref= $repo->getCbyGbyRef($id1,$id2);
+        return $this->json($ref,Response::HTTP_OK);
     }
 }

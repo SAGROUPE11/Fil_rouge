@@ -28,13 +28,15 @@ class Apprenant extends User
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"groupe:read_All","promo:principal_read","promo:attente_read","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","promo:principal_read","promo:attente_read","promo_groupe_apprenant:read","apprenant_competence:read"})
+     * @Groups({"commentencesvalides:read","competences:read"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupe:read_All","promo:principal_read","promo:attente_read","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","promo:principal_read","promo:attente_read","promo_groupe_apprenant:read", "apprenant_competence:read"})
+     *  @Groups({"commentencesvalides:read","competences:read"})
      */
     private $adresse;
 
@@ -45,7 +47,8 @@ class Apprenant extends User
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"groupe:read_All","promo:principal_read","promo:attente_read","promo_groupe_apprenant:read"})
+     * @Groups({"groupe:read_All","promo:principal_read","promo:attente_read","promo_groupe_apprenant:read", "apprenant_competence:read","competences:read"})
+     *
      */
     private $statut;
 
@@ -67,12 +70,23 @@ class Apprenant extends User
     /**
      * @ORM\Column(type="boolean")
      */
-    private $en_attente;
+    private $en_attente=true;
 
     /**
      * @ORM\OneToMany(targetEntity=BriefApprenant::class, mappedBy="apprenant")
      */
     private $briefApprenants;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CompetencesValides::class, mappedBy="apprenant")
+     * @Groups({"apprenant_competence:read","competences:read"})
+     */
+    private $competencesValides;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ApprenantLivrablePartielle::class, mappedBy="apprenant")
+     */
+    private $apprenantLivrablePartielle;
    
     public function __construct()
     {
@@ -80,6 +94,8 @@ class Apprenant extends User
         $this->groupe = new ArrayCollection();
         $this->brief = new ArrayCollection();
         $this->briefApprenants = new ArrayCollection();
+        $this->competencesValides = new ArrayCollection();
+        $this->apprenantLivrablePartielle = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -224,6 +240,68 @@ class Apprenant extends User
             // set the owning side to null (unless already changed)
             if ($briefApprenant->getApprenant() === $this) {
                 $briefApprenant->setApprenant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CompetencesValides[]
+     */
+    public function getCompetencesValides(): Collection
+    {
+        return $this->competencesValides;
+    }
+
+    public function addCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if (!$this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides[] = $competencesValide;
+            $competencesValide->setApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if ($this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides->removeElement($competencesValide);
+            // set the owning side to null (unless already changed)
+            if ($competencesValide->getApprenant() === $this) {
+                $competencesValide->setApprenant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ApprenantLivrablePartielle[]
+     */
+    public function getApprenantLivrablePartielle(): Collection
+    {
+        return $this->apprenantLivrablePartielle;
+    }
+
+    public function addApprenantLivrablePartielle(ApprenantLivrablePartielle $apprenantLivrablePartielle): self
+    {
+        if (!$this->apprenantLivrablePartielle->contains($apprenantLivrablePartielle)) {
+            $this->apprenantLivrablePartielle[] = $apprenantLivrablePartielle;
+            $apprenantLivrablePartielle->setApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApprenantLivrablePartielle(ApprenantLivrablePartielle $apprenantLivrablePartielle): self
+    {
+        if ($this->apprenantLivrablePartielle->contains($apprenantLivrablePartielle)) {
+            $this->apprenantLivrablePartielle->removeElement($apprenantLivrablePartielle);
+            // set the owning side to null (unless already changed)
+            if ($apprenantLivrablePartielle->getApprenant() === $this) {
+                $apprenantLivrablePartielle->setApprenant(null);
             }
         }
 

@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Briefs;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BriefsRepository;
 use Doctrine\Common\Collections\Collection;
@@ -17,22 +16,99 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *            "input_formats"={"json"={"application/ld+json", "application/json"}},
  *            "output_formats"={"json"={"application/ld+json", "application/json"}}
  *      },
- * routePrefix="/formateurs",
  *  collectionOperations={
- *      "get_FormateurPromoGroupesBriefById"={
+ *     "get"={
+ *         "path"="formateurs/briefs",
+ *         "normalization_context"={"groups"={"brief:read"}},
+ *         "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM'))",
+ *  }, 
+ *      "get_promo_id_groupe_id_briefs"={
  *         "method"="GET",
- *         "path"="/{id_formateur}/promo/{id_promo}/briefs/{id_brief}",
- *         "requirements"={"id_formateur"="\d+","id_promo"="\d+","id_brief"="\d+"},
- *         "controller"=Briefs::class,
- *         "route_name"="show_FormateurPromoGroupesBriefById",
- *  },    
+ *         "path"="api/formateurs/promo/{id_promo}/groupe/{id_groupe}/briefs",
+ *         "controller"=ShowBriefController::class,
+ *         "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM'))",
+ *         "route_name"="show_promo_id_groupe_id_briefs"
+ *  },
+ *        "get_promo_id_briefs"={
+ *         "method"="GET",
+ *         "path"="api/formateurs/promo/{id_promo}/briefs",
+ *         "controller"=ShowBriefController::class,
+ *         "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
+ *         "route_name"="show_promo_id_briefs"
+ *  },
+ *      "get_FormateurBrouillonBrief"={
+ *         "method"="GET",
+ *         "path"="api/formateurs/{id}/briefs/brouillons",
+ *         "controller"=ShowBriefController::class,
+ *         "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
+ *          "route_name"="show_FormateurBrouillonBrief"
+ *  },
+ *   "get_FormateurValideBrief"={
+ *         "method"="GET",
+ *         "path"="api/formateurs/{id}/briefs/valide",
+ *         "controller"=ShowBriefController::class,
+ *         "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
+ *         "route_name"="show_FormateurValideBrief"
+ *  },
+ *  "get_promo_id_brief_id"={
+ *          "method"="GET",
+ *          "path"="api/formateurs/promo/{id_promo}/briefs/{id_brief}",
+ *          "controller"=BriefController::class,
+ *          "route_name"="show_promo_id_brief_id",
+ *          "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
+ *          "route_name"="show_promoIdBriefId"
+ *  },
+ *  "get_brief_by_promo_Id_apprenant"={
+ *           "method"="GET",
+ *           "path"="api/apprenants/promo/{id_promo}/briefs",
+ *           "controller"=BriefController::class,
+ *           "access_control"="(is_granted('ROLE_Apprenant'))",
+ *           "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *           "route_name"="show_briefByPromoIdApprenant"
+ *   },  
  *  "post_formateur_brief"={
  *         "method"="POST",
- *         "path"="/briefs/{id}",
+ *         "path"="formateurs/briefs/{id}",
  *         "requirements"={"id"="\d+"},
  *         "controller"=Briefs::class,
- *         "route_name"="add_formateur_brief",
- *  }
+ *          "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
+ *          "access_control_message"="Vous n'avez pas access à cette Ressource",                  
+ *         "route_name"="add_formateur_brief"
+ *      },
+ * "post_brief"={
+ *         "method"="POST",
+ *         "path"="formateurs/briefs",
+ *          "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
+ *          "access_control_message"="Vous n'avez pas access à cette Ressource",                  
+ *         "controller"=Briefs::class,
+ *         "route_name"="add_brief"
+ *      }, 
+ *  "post_groupe_apprenant"={
+ *         "method"="POST",
+ *         "path"="apprenants/{id_apprenant}/groupe/{id_groupe}/livrables",
+ *          "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *          "access_control_message"="Vous n'avez pas access à cette Ressource",                  
+ *         "controller"=Briefs::class,
+ *         "route_name"="add_groupe_apprenant"
+ *      }
+ * },
+ *    itemOperations={
+ * "EditPromoBrief"={
+ *              "path" = "formateurs/promo/{id_promo}/brief/{id_brief}/assignation",
+ *              "method"="PUT",
+ *              "requirements"={"id_promo"="\d+", "id_brief"="\d+"},
+ *              "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *              "access_control_message"="Vous n'avez pas access à cette Ressource",    
+ *              "route_name"="edit_promo_brief",      
+ *          },
+ *  "PutPromoBrief"={
+ *              "path" = "formateurs/promo/{id_promo}/brief/{id_brief}",
+ *              "method"="PUT",
+ *              "requirements"={"id_promo"="\d+","id_brief"="\d+"},
+ *              "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant'))",
+ *              "access_control_message"="Vous n'avez pas access à cette Ressource",    
+ *              "route_name"="put_promo_brief",      
+ *          }
  *  }
  * )
  */
@@ -42,60 +118,32 @@ class Briefs
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"brief_Groupe:read"})
      */
     private $id;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $titre;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $enonce;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $contexte;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="date")
-     */
-    private $dateEcheance;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $etat;
 
 
     /**
      * @ORM\ManyToOne(targetEntity=Formateur::class, inversedBy="briefs")
-     * @Groups({"brief:read_all"})
+     * @Groups({"brief:read_all","brief_Groupe:read"})
      */
     private $formateurs;
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="briefs")
-     *  @Groups({"brief_route7:read"})
+     *  @Groups({"brief_route7:read","brief_Groupe:read","brief:read"})
      */
     private $tags;
 
     /**
      * @ORM\ManyToMany(targetEntity=Niveau::class, inversedBy="briefs")
-     *  @Groups({"brief_route7:read"})
+     *  @Groups({"brief_route7:read","brief_Groupe:read","brief:read"})
      */
     private $niveau;
 
     /**
      * @ORM\OneToMany(targetEntity=BriefMaPromo::class, mappedBy="briefs")
+     * @Groups({"brief_Groupe:read"})
      */
     private $briefMaPromos;
 
@@ -116,9 +164,75 @@ class Briefs
 
     /**
      * @ORM\ManyToMany(targetEntity=Promo::class, inversedBy="briefs")
-     * @Groups({"brief_route7:read"})
+     * @Groups({"brief_route7:read","brief_Groupe:read","brief:read"})
      */
     private $promo;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *  @Groups({"brief_Groupe:read","brief:read"})
+     */
+    private $langue;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *  @Groups({"brief_Groupe:read","brief:read"})
+     */
+    private $nomBrief;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *  @Groups({"brief_Groupe:read","brief:read"})
+     */
+    private $description;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *  @Groups({"brief_Groupe:read","brief:read"})
+     */
+    private $contexte;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $livrableAttendus;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $modalitePedagogique;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $critereEvaluation;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $modaliteEvaluation;
+
+    /**
+     * @ORM\Column(type="blob")
+     */
+    private $imagePromo;
+
+    /**
+     * @ORM\Column(type="date")
+     *  @Groups({"brief_Groupe:read","brief:read"})
+     */
+    private $CreationDate;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     *  @Groups({"brief_Groupe:read","brief:read"})
+     */
+    private $etat;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $archived;
 
     public function __construct()
     {
@@ -139,77 +253,6 @@ class Briefs
         return $this->id;
     }
 
-    public function getTitre(): ?string
-    {
-        return $this->titre;
-    }
-
-    public function setTitre(string $titre): self
-    {
-        $this->titre = $titre;
-
-        return $this;
-    }
-
-    public function getEnonce(): ?string
-    {
-        return $this->enonce;
-    }
-
-    public function setEnonce(string $enonce): self
-    {
-        $this->enonce = $enonce;
-
-        return $this;
-    }
-
-    public function getContexte(): ?string
-    {
-        return $this->contexte;
-    }
-
-    public function setContexte(string $contexte): self
-    {
-        $this->contexte = $contexte;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getDateEcheance(): ?\DateTimeInterface
-    {
-        return $this->dateEcheance;
-    }
-
-    public function setDateEcheance(\DateTimeInterface $dateEcheance): self
-    {
-        $this->dateEcheance = $dateEcheance;
-
-        return $this;
-    }
-
-    public function getEtat(): ?string
-    {
-        return $this->etat;
-    }
-
-    public function setEtat(string $etat): self
-    {
-        $this->etat = $etat;
-
-        return $this;
-    }
 
     public function getFormateurs(): ?formateur
     {
@@ -422,6 +465,150 @@ class Briefs
         if ($this->promo->contains($promo)) {
             $this->promo->removeElement($promo);
         }
+
+        return $this;
+    }
+
+    public function getLangue(): ?string
+    {
+        return $this->langue;
+    }
+
+    public function setLangue(string $langue): self
+    {
+        $this->langue = $langue;
+
+        return $this;
+    }
+
+    public function getNomBrief(): ?string
+    {
+        return $this->nomBrief;
+    }
+
+    public function setNomBrief(string $nomBrief): self
+    {
+        $this->nomBrief = $nomBrief;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getContexte(): ?string
+    {
+        return $this->contexte;
+    }
+
+    public function setContexte(string $contexte): self
+    {
+        $this->contexte = $contexte;
+
+        return $this;
+    }
+
+    public function getLivrableAttendus(): ?string
+    {
+        return $this->livrableAttendus;
+    }
+
+    public function setLivrableAttendus(string $livrableAttendus): self
+    {
+        $this->livrableAttendus = $livrableAttendus;
+
+        return $this;
+    }
+
+    public function getModalitePedagogique(): ?string
+    {
+        return $this->modalitePedagogique;
+    }
+
+    public function setModalitePedagogique(string $modalitePedagogique): self
+    {
+        $this->modalitePedagogique = $modalitePedagogique;
+
+        return $this;
+    }
+
+    public function getCritereEvaluation(): ?string
+    {
+        return $this->critereEvaluation;
+    }
+
+    public function setCritereEvaluation(string $critereEvaluation): self
+    {
+        $this->critereEvaluation = $critereEvaluation;
+
+        return $this;
+    }
+
+    public function getModaliteEvaluation(): ?string
+    {
+        return $this->modaliteEvaluation;
+    }
+
+    public function setModaliteEvaluation(string $modaliteEvaluation): self
+    {
+        $this->modaliteEvaluation = $modaliteEvaluation;
+
+        return $this;
+    }
+
+    public function getImagePromo()
+    {
+        return $this->imagePromo;
+    }
+
+    public function setImagePromo($imagePromo): self
+    {
+        $this->imagePromo = $imagePromo;
+
+        return $this;
+    }
+
+    public function getCreationDate(): ?\DateTimeInterface
+    {
+        return $this->CreationDate;
+    }
+
+    public function setCreationDate(\DateTimeInterface $CreationDate): self
+    {
+        $this->CreationDate = $CreationDate;
+
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(string $etat): self
+    {
+        $this->etat = $etat;
+
+        return $this;
+    }
+
+    public function getArchived(): ?bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(bool $archived): self
+    {
+        $this->archived = $archived;
 
         return $this;
     }

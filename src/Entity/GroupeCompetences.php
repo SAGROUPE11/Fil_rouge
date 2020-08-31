@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=GroupeCompetencesRepository::class)
  * @ApiResource(
- * normalizationContext={"groups"={"groupecompetence:read_All"}},
+ * normalizationContext={"groups"={"groupecompetence:read_All","groupecompetence:read_All"}},
  * collectionOperations=
  * {
  *      "get"=
@@ -51,6 +51,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  * "access_control_message"="Vous n'avez pas access à cette Ressource",
  * "route_name"="new_grpecompetence",
  * },
+ * "get_grpcompetence"={
+ * "method"="GET",
+ * "path"="/api/admin/referentiels/grpecompetences" ,
+ * "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_CM'))",
+ * "access_control_message"="Vous n'avez pas access à cette Ressource",
+ *  "route_name"="grpcompetence_liste",
+ * },
  * },
  * 
  *  itemOperations={
@@ -81,37 +88,37 @@ class GroupeCompetences
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"groupecompetence:read_All","promo:read_CRGrp_C"})
+     * @Groups({"groupecompetence:read_All","promo:read_CRGrp_C","refgrcomp:read","reference:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le libelle est obligatoire")
-     * @Groups({"groupecompetence:read_All","promo:read_CRGrp_C"})
+     * @Groups({"groupecompetence:read_All","promo:read_CRGrp_C","refgrcomp:read","reference:read"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le descriptif est obligatoire")
-     *  @Groups({"groupecompetence:read_All","promo:read_CRGrp_C"})
+     *  @Groups({"groupecompetence:read_All","promo:read_CRGrp_C","refgrcomp:read","reference:read"})
      */
     private $descriptif;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Competences::class, inversedBy="groupeCompetences")
+     * @ORM\ManyToMany(targetEntity=Competences::class, inversedBy="groupeCompetences",cascade={"persist"})
      *  @Groups({"groupecompetence:read_All","promo:read_CRGrp_C"})
      */
     private $competences;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Referenciel::class, inversedBy="groupeCompetences")
+     * @ORM\ManyToMany(targetEntity=Referenciel::class, inversedBy="groupeCompetences",cascade={"persist"})
      */
     private $referenciel;
 
     /**
-     * @ORM\ManyToOne(targetEntity=user::class, inversedBy="groupeCompetences")
+     * @ORM\ManyToOne(targetEntity=user::class, inversedBy="groupeCompetences",cascade={"persist"})
      */
     private $user;
 

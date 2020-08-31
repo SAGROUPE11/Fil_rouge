@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-
+use App\Entity\Formateur;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
@@ -14,7 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\DiscriminatorMap;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
 
 /**
  *@ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -156,11 +155,6 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity=GroupeCompetences::class, mappedBy="user")
      */
     protected $groupeCompetences;
-    public function __construct()
-    {
-        $this->promos = new ArrayCollection();
-        $this->groupeCompetences = new ArrayCollection();
-    }
     
     
     public function getId(): ?int

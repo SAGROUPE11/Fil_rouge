@@ -20,7 +20,7 @@ class Formateur extends User
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"promo:read_All","groupe:read_All","promo:principal_read","promo_formateur:read"})
+     * @Groups({"promo:read_All","groupe:read_All","promo:principal_read","promo_formateur:read","brief_Groupe:read"})
      */
     protected $id;
 
@@ -41,10 +41,16 @@ class Formateur extends User
      */
     private $telephone;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Commentaire::class, mappedBy="formateur")
+     */
+    private $commentaires;
+
     public function __construct()
     {
         $this->promos = new ArrayCollection();
         $this->groupe = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
     }
 
     
@@ -115,6 +121,37 @@ class Formateur extends User
     public function setTelephone(int $telephone): self
     {
         $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Commentaire[]
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(Commentaire $commentaire): self
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires[] = $commentaire;
+            $commentaire->setFormateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaire $commentaire): self
+    {
+        if ($this->commentaires->contains($commentaire)) {
+            $this->commentaires->removeElement($commentaire);
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getFormateur() === $this) {
+                $commentaire->setFormateur(null);
+            }
+        }
 
         return $this;
     }

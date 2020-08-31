@@ -125,4 +125,23 @@ class GrpeCompetencesController extends AbstractController
         return $this->json($grpeCompetences,Response::HTTP_OK);
     }
 
+    /**
+     * @Route(
+     * name="grpcompetence_liste",
+     * path="/api/admin/referentiels/grpecompetences",
+     * methods={"GET"},
+     * defaults={
+     * "_controller"="\App\Controller\GrpeCompetencesController::showgrpeCompetences",
+     * "_api_resource_class"=GroupeCompetences::class,
+     * "_api_collection_operation_name"="get_grpcompetence"
+     * }
+     * )
+     */
+
+    public function showgrpeCompetences(GroupeCompetencesRepository $repo)
+    {
+        $grcompetence= $repo->findGRCComp();
+        return $this->json( $grcompetence,Response::HTTP_OK);
+    }
+
 }

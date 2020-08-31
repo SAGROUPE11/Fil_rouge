@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 use App\Entity\Niveau;
+use App\Entity\Promo;
+use App\Entity\Referenciel;
+use App\Entity\CompetencesValides;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\GroupeCompetences;
 use App\Repository\CompetenceRepository;
@@ -33,8 +36,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *    "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur'))",
  *    "access_control_message"="Vous n'avez pas access à cette Ressource",
  *     "route_name"="add_competence"
- *                      }
- *       }, 
+ *       },
+ * "get_grpecompetence_by_id"={
+ * "method"="GET",
+ * "path"="/api/admin/referentiels/{id1}/grpecompetences/{id2}",
+ * "access_control"="(is_granted('ROLE_Admin') or is_granted('ROLE_Formateur') or is_granted('ROLE_Apprenant') or is_granted('ROLE_Apprenant'))",
+ * "access_control_message"="Vous n'avez pas access à cette Ressource",
+ * "route_name"="grpecompetence_by_id",
+ * },
+ *    },
  *      itemOperations={
  *     "put","delete","patch","get",
  *    "get_competence_by_id"={
@@ -53,32 +63,38 @@ class Competences
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"competence:read", "groupecompetence:read_All","promo:read_CRGrp_C"})
+     * @Groups({"competence:read", "groupecompetence:read_All","promo:read_CRGrp_C", "apprenant_competence:read", "commentencesvalides:read","competences:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le libelle est obligatoire")
-     * @Groups({"competence:read", "groupecompetence:read_All","promo:read_CRGrp_C"})
+     * @Groups({"competence:read", "groupecompetence:read_All","promo:read_CRGrp_C", "apprenant_competence:read", "commentencesvalides:read","competences:read"})
      */
     private $libelle;
 
     /**
-     * @ORM\ManyToMany(targetEntity=GroupeCompetences::class, mappedBy="competences")
+     * @ORM\ManyToMany(targetEntity=GroupeCompetences::class, mappedBy="competences",cascade={"persist"})
      */
     private $groupeCompetences;
 
     /**
-     * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="competence")
+     * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="competence",cascade={"persist"})
      * @Groups({"competence:read", "groupecompetence:read_All"})
      */
     private $niveaux;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CompetencesValides::class, mappedBy="competences",cascade={"persist"})
+     */
+    private $competencesValides;
 
     public function __construct()
     {
         $this->groupeCompetences = new ArrayCollection();
         $this->niveaux = new ArrayCollection();
+        $this->competencesValides = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -151,6 +167,37 @@ class Competences
             // set the owning side to null (unless already changed)
             if ($niveau->getCompetence() === $this) {
                 $niveau->setCompetence(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CompetencesValides[]
+     */
+    public function getCompetencesValides(): Collection
+    {
+        return $this->competencesValides;
+    }
+
+    public function addCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if (!$this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides[] = $competencesValide;
+            $competencesValide->setCompetences($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompetencesValide(CompetencesValides $competencesValide): self
+    {
+        if ($this->competencesValides->contains($competencesValide)) {
+            $this->competencesValides->removeElement($competencesValide);
+            // set the owning side to null (unless already changed)
+            if ($competencesValide->getCompetences() === $this) {
+                $competencesValide->setCompetences(null);
             }
         }
 
